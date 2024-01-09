@@ -1,0 +1,24 @@
+.cell{
+    width: 75px;
+    height: 75px;
+    border: 2px solid;
+    box-shadow: 0 0 0 2px;
+    line-height: 75px;
+    font-size: 50px;
+    cursor: pointer;
+}
+.cell:hover,
+.cell.hovered-cell {
+    background-color: lightblue; /* Change this to the desired hover color */
+}
+#gameContainer{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 1000;
+    text-align: center;
+}
+#gameBoard{
+    display: grid;
+    grid-template-columns: repeat(7, auto);
+    width: 550px;
+    margin:auto;
+}
