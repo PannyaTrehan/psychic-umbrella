@@ -20,13 +20,13 @@ function initialiseGame() {
 }
 
 function cellClicked() {
-    const clickedColumn = this.getAttribute("cellIndex") % 7;  //will return the column number [0-6]
-    const rowIndex = findAvailableRow(clickedColumn); //only return row
+    const columnIndex = this.getAttribute("cellIndex") % 7;  //will return the column number [0-6]
+    const rowIndex = findAvailableRow(columnIndex); //only return row
 
-    if (isValidMove(rowIndex, clickedColumn)) {
-        updateCell(rowIndex, clickedColumn); //take input clickedColumnIndex (for column)
+    if (isValidMove(rowIndex, columnIndex)) {
+        updateCell(rowIndex, columnIndex); //take input columnIndex (for column)
+        checkWinner(rowIndex, columnIndex);
         changePlayer();
-        checkWinner();
     }
 }
 
@@ -80,6 +80,69 @@ function restartGame() {
     running = true;
 }
 
-function checkWinner() {
+function checkWinner(row, column) {
+    console.log(row, column);
+    if (checkVertical(row, column)) {
+        console.log("vertical 4 in a row");
+    }
+    if (checkHorizontal(row, column)) {
+        console.log("horizontal 4 in a row");
+    }
+    if (checkNegativeDiagonal(row, column)) {
+        console.log("negative diagonal 4 in a row");
+    }
+    if (checkPositiveDiagonal(row, column)) {
+        console.log("positive diagonal 4 in a row");
+    }
     // TODO: Implement the logic to check for a winner in the 2D array (board)
+}
+function checkVertical(row, column) {
+    let numSameIconsNextTo = 0;
+
+    for (let i = 1; i <= 3; i++) {
+        if (row+i <= 5 && board[row + i][column] === currentPlayer) {
+            numSameIconsNextTo++;
+        }
+    }
+
+    return numSameIconsNextTo >= 3;
+}
+function checkHorizontal(row, column) {
+    let numSameIconsNextTo = 0;
+    for (let i = 1; i < 4; i++) {
+        if (column-i >= 0 && board[row][column - i] === currentPlayer) {
+            numSameIconsNextTo++;
+        }
+        if (column+i <= 6 && board[row][column + i] === currentPlayer) {
+            numSameIconsNextTo++;
+        }
+    }
+
+    return numSameIconsNextTo >= 3;
+}
+function checkPositiveDiagonal(row, column) {
+    let numSameIconsNextTo = 0;
+    for (let i = 1; i < 4; i++) {
+        if (column-i >= 0 && row+i <= 5 && board[row + i][column - i] === currentPlayer) { //bottom left
+            numSameIconsNextTo++;
+        }
+        if (column+i <= 6 && row-i >= 0 && board[row - i][column + i] === currentPlayer) { //top right
+            numSameIconsNextTo++;
+        }
+    }
+
+    return numSameIconsNextTo >= 3;
+}
+function checkNegativeDiagonal(row, column) {
+    let numSameIconsNextTo = 0;
+    for (let i = 1; i < 4; i++) {
+        if (column-i >= 0 && row-i >= 0 && board[row - i][column - i] === currentPlayer) { //top left
+            numSameIconsNextTo++;
+        }
+        if (column+i <= 6 && row+i <= 5 && board[row + i][column + i] === currentPlayer) { //bottom right
+            numSameIconsNextTo++;
+        }
+    }
+
+    return numSameIconsNextTo >= 3;
 }
