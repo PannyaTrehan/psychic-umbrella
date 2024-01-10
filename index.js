@@ -20,11 +20,11 @@ function initialiseGame() {
 }
 
 function cellClicked() {
-    const clickedColumnIndex = this.getAttribute("cellIndex") % 7;  //will return the column number [0-6]
-    const cellIndex = findAvailableSlot(clickedColumnIndex); //only return row
+    const clickedColumn = this.getAttribute("cellIndex") % 7;  //will return the column number [0-6]
+    const rowIndex = findAvailableRow(clickedColumn); //only return row
 
-    if (isValidMove(cellIndex)) {
-        updateCell(cellIndex); //take input clickedColumnIndex (for column)
+    if (isValidMove(rowIndex, clickedColumn)) {
+        updateCell(rowIndex, clickedColumn); //take input clickedColumnIndex (for column)
         changePlayer();
         checkWinner();
     }
@@ -42,24 +42,23 @@ function cellUnhovered() {
     cells.forEach(cell => cell.classList.remove("hovered-cell"));
 }
 
-function findAvailableSlot(columnIndex) {
+function findAvailableRow(columnIndex) {
     for (let row = 5; row >= 0; row--) {
         if (board[row][columnIndex] === "") {
-            return row * 7 + columnIndex;
+            return row;
         }
     }
 }
 
-function isValidMove(index) {
-    return index >= 0 && index <= 41 && running;
+function isValidMove(row, column) {
+    let cellIndex = row * 7 + column;
+    return cellIndex >= 0 && cellIndex <= 41 && running;
 }
 
-function updateCell(index) {
-    const cellToUpdate = document.querySelector(`[cellIndex="${index}"]`);
-    const row = Math.floor(index / 7);
-    const col = index % 7;
+function updateCell(row, column) {
+    const cellToUpdate = document.querySelector(`[cellIndex="${row * 7 + column}"]`);
 
-    board[row][col] = currentPlayer;
+    board[row][column] = currentPlayer;
     cellToUpdate.textContent = currentPlayer;
 }
 
