@@ -1,3 +1,25 @@
+.tool{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75px;
+    height: 75px;
+    line-height: 75px;
+    cursor: pointer;
+}
+
+.cell:hover,
+.cell.hovered-cell {
+    /* Add styles for hover effect here */
+}
+
+#selectionTool{
+    display: grid;
+    grid-template-columns: repeat(7, auto);
+    width: 555px;
+    margin:auto;
+    margin-bottom: 10px;
+}
 .cell{
     display: flex;
     align-items: center;
@@ -11,9 +33,7 @@
     cursor: pointer;
     background-color: rgb(16, 16, 193);
 }
-.cell:hover,
-.cell.hovered-cell {
-}
+
 #gameContainer{
     font-family: 'Roboto', sans-serif;
     font-weight: 1000;
@@ -42,4 +62,7 @@
 .player-default {
     background-color: white;
     box-shadow: 0 0 10px 5px darkblue;
+}
+.hover-default {
+    background-color: greenyellow;
 }

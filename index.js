@@ -1,4 +1,5 @@
 const cells = document.querySelectorAll(".cell");
+const selectionCells = document.querySelectorAll(".tool");
 const statusText = document.querySelector("#statusText");
 const restartBtn = document.querySelector("#restartBtn");
 
@@ -9,6 +10,11 @@ let running = false;
 initialiseGame();
 
 function initialiseGame() {
+    selectionCells.forEach(tool => {
+        tool.addEventListener("click", cellClicked)
+        tool.addEventListener("mouseenter", cellHovered);
+        tool.addEventListener("mouseleave", cellUnhovered);
+    })
     cells.forEach(cell => {
         cell.addEventListener("click", cellClicked);
         cell.addEventListener("mouseenter", cellHovered);
@@ -21,7 +27,13 @@ function initialiseGame() {
 }
 
 function cellClicked() {
-    const columnIndex = this.getAttribute("cellIndex") % 7;  //will return the column number [0-6]
+    let columnIndex = this.getAttribute("toolIndex");
+    if (columnIndex === null) {
+        columnIndex = this.getAttribute("cellIndex") % 7;  //will return the column number [0-6]
+    } else {
+        columnIndex--;
+    }
+
     const rowIndex = findAvailableRow(columnIndex); //only return row
 
     if (isValidMove(rowIndex, columnIndex)) {
@@ -36,15 +48,20 @@ function cellClicked() {
 }
 
 function cellHovered() {
-    const columnIndex = parseInt(this.getAttribute("cellIndex")) % 7;
-
-    for (let row = 0; row < 6; row++) {
-        cells[row * 7 + columnIndex].classList.add("hovered-cell");
+    let toolToUpdate = document.querySelector(`[toolIndex="${parseInt(this.getAttribute("toolIndex"))}"]`);
+    if (toolToUpdate === null) {
+        toolToUpdate = document.querySelector(`[toolIndex="${(this.getAttribute("cellIndex") % 7) + 1}"]`);
     }
+    const greenCircleDiv = document.createElement('div');
+    greenCircleDiv.classList.add('circle', 'hover-default');
+    toolToUpdate.innerHTML = '';
+    toolToUpdate.appendChild(greenCircleDiv);
 }
 
 function cellUnhovered() {
-    cells.forEach(cell => cell.classList.remove("hovered-cell"));
+    selectionCells.forEach(tool => {
+        tool.innerHTML = ''; // Clear the content of the tool
+    });
 }
 
 function findAvailableRow(columnIndex) {
@@ -88,24 +105,6 @@ function updateCell(row, column) {
 
 function declareWinner() {
     statusText.textContent = `${currentPlayer} is the winner`;
-}
-
-function changePlayer() {
-    currentPlayer = (currentPlayer === "Red") ? "Yellow" : "Red";
-    statusText.textContent = `${currentPlayer}'s turn`;
-}
-
-function restartGame() {
-    currentPlayer = "X";
-    board = Array.from({ length: 6 }, () => Array(7).fill(''));
-    statusText.textContent = `${currentPlayer}'s turn`;
-
-    cells.forEach(cell => {
-        cell.textContent = "";
-        cell.classList.remove("hovered-cell");
-    });
-    setCells();
-    running = true;
 }
 
 function checkWinner(row, column) {
@@ -159,7 +158,7 @@ function checkPositiveDiagonal(row, column) {
         } else if (column-i >= 0 && row+i <= 5 && board[row + i][column - i] != currentPlayer && board[row + i][column - i] != "") {
             leftIntercept = true;
         }
-        if (column+i <= 6 && row-i >= 0 && board[row - i][column + i] === currentPlayer) { //top right
+        if (column+i <= 6 && row-i >= 0 && board[row - i][column + i] === currentPlayer && rightIntercept == false) { //top right
             numSameIconsNextToRight++;
         } else if (column+i <= 6 && row-i >= 0 && board[row - i][column + i] != currentPlayer && board[row - i][column + i] !=  "") {
             rightIntercept = true;
@@ -189,3 +188,22 @@ function checkNegativeDiagonal(row, column) {
 
     return (numSameIconsNextToLeft + numSameIconsNextToRight) >= 3;
 }
+
+function changePlayer() {
+    currentPlayer = (currentPlayer === "Red") ? "Yellow" : "Red";
+    statusText.textContent = `${currentPlayer}'s turn`;
+}
+
+function restartGame() {
+    currentPlayer = "Red";
+    board = Array.from({ length: 6 }, () => Array(7).fill(''));
+    statusText.textContent = `${currentPlayer}'s turn`;
+
+    cells.forEach(cell => {
+        cell.textContent = "";
+        cell.classList.remove("hovered-cell");
+    });
+    setCells();
+    running = true;
+}
+
