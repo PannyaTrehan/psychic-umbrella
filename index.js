@@ -2,7 +2,7 @@ const cells = document.querySelectorAll(".cell");
 const statusText = document.querySelector("#statusText");
 const restartBtn = document.querySelector("#restartBtn");
 
-let board = Array.from({ length: 6 }, () => Array(7).fill(''));
+let board = Array.from({ length: 6 }, () => Array(7).fill('')); //[row (0-5)][column (0-6)]
 let currentPlayer = "X";
 let running = false;
 
@@ -20,11 +20,11 @@ function initialiseGame() {
 }
 
 function cellClicked() {
-    const clickedColumnIndex = this.getAttribute("cellIndex") % 7;
-    const cellIndex = findAvailableSlot(clickedColumnIndex);
+    const clickedColumnIndex = this.getAttribute("cellIndex") % 7;  //will return the column number [0-6]
+    const cellIndex = findAvailableSlot(clickedColumnIndex); //only return row
 
     if (isValidMove(cellIndex)) {
-        updateCell(cellIndex);
+        updateCell(cellIndex); //take input clickedColumnIndex (for column)
         changePlayer();
         checkWinner();
     }
@@ -51,7 +51,7 @@ function findAvailableSlot(columnIndex) {
 }
 
 function isValidMove(index) {
-    return board[Math.floor(index / 7)][index % 7] === "" && running;
+    return index >= 0 && index <= 41 && running;
 }
 
 function updateCell(index) {
