@@ -3,7 +3,7 @@ const statusText = document.querySelector("#statusText");
 const restartBtn = document.querySelector("#restartBtn");
 
 let board = Array.from({ length: 6 }, () => Array(7).fill('')); //[row (0-5)][column (0-6)]
-let currentPlayer = "X";
+let currentPlayer = "Red";
 let running = false;
 
 initialiseGame();
@@ -25,9 +25,13 @@ function cellClicked() {
 
     if (isValidMove(rowIndex, columnIndex)) {
         updateCell(rowIndex, columnIndex); //take input columnIndex (for column)
-        checkWinner(rowIndex, columnIndex);
+        if (checkWinner(rowIndex, columnIndex)) {
+            declareWinner();
+            running = false;
+            return;
+        }
         changePlayer();
-    }
+    }    
 }
 
 function cellHovered() {
@@ -59,11 +63,24 @@ function updateCell(row, column) {
     const cellToUpdate = document.querySelector(`[cellIndex="${row * 7 + column}"]`);
 
     board[row][column] = currentPlayer;
-    cellToUpdate.textContent = currentPlayer;
+
+    // Create a div element for the circle
+    const circleDiv = document.createElement('div');
+
+    // Add a class based on currentPlayer for styling
+    circleDiv.classList.add('circle', currentPlayer === 'Red' ? 'player-X' : 'player-O');
+
+    // Clear the contents of the cell and append the circle
+    cellToUpdate.innerHTML = '';
+    cellToUpdate.appendChild(circleDiv);
+}
+
+function declareWinner() {
+    statusText.textContent = `${currentPlayer} is the winner`;
 }
 
 function changePlayer() {
-    currentPlayer = (currentPlayer === "X") ? "O" : "X";
+    currentPlayer = (currentPlayer === "Red") ? "Blue" : "Red";
     statusText.textContent = `${currentPlayer}'s turn`;
 }
 
@@ -81,20 +98,11 @@ function restartGame() {
 }
 
 function checkWinner(row, column) {
-    console.log(row, column);
-    if (checkVertical(row, column)) {
-        console.log("vertical 4 in a row");
+    if (checkVertical(row, column) || checkHorizontal(row, column) || checkNegativeDiagonal(row, column) || checkPositiveDiagonal(row, column)) {
+        return true;
     }
-    if (checkHorizontal(row, column)) {
-        console.log("horizontal 4 in a row");
-    }
-    if (checkNegativeDiagonal(row, column)) {
-        console.log("negative diagonal 4 in a row");
-    }
-    if (checkPositiveDiagonal(row, column)) {
-        console.log("positive diagonal 4 in a row");
-    }
-    // TODO: Implement the logic to check for a winner in the 2D array (board)
+
+    return false;
 }
 function checkVertical(row, column) {
     let numSameIconsNextTo = 0;
@@ -108,41 +116,65 @@ function checkVertical(row, column) {
     return numSameIconsNextTo >= 3;
 }
 function checkHorizontal(row, column) {
-    let numSameIconsNextTo = 0;
+    let numSameIconsNextToLeft = 0;
+    let numSameIconsNextToRight = 0;
+    let leftIntercept = false;
+    let rightIntercept = false;
+
     for (let i = 1; i < 4; i++) {
-        if (column-i >= 0 && board[row][column - i] === currentPlayer) {
-            numSameIconsNextTo++;
+        if (column-i >= 0 && board[row][column - i] === currentPlayer && leftIntercept === false) {
+            numSameIconsNextToLeft++;
+        } else if (column-i >= 0 && board[row][column - i] != currentPlayer && board[row][column - i] != "") {
+            leftIntercept = true;
         }
-        if (column+i <= 6 && board[row][column + i] === currentPlayer) {
-            numSameIconsNextTo++;
+        if (column+i <= 6 && board[row][column + i] === currentPlayer && rightIntercept === false) {
+            numSameIconsNextToRight++;
+        } else if (column+i <= 6 && board[row][column + i] != currentPlayer && board[row][column + i] != "") {
+            rightIntercept = true;
         }
     }
 
-    return numSameIconsNextTo >= 3;
+    return (numSameIconsNextToLeft + numSameIconsNextToRight) >= 3;
 }
 function checkPositiveDiagonal(row, column) {
-    let numSameIconsNextTo = 0;
+    let numSameIconsNextToLeft = 0;
+    let numSameIconsNextToRight = 0;
+    let leftIntercept = false;
+    let rightIntercept = false;
+
     for (let i = 1; i < 4; i++) {
-        if (column-i >= 0 && row+i <= 5 && board[row + i][column - i] === currentPlayer) { //bottom left
-            numSameIconsNextTo++;
+        if (column-i >= 0 && row+i <= 5 && board[row + i][column - i] === currentPlayer && leftIntercept === false) { //bottom left
+            numSameIconsNextToLeft++;
+        } else if (column-i >= 0 && row+i <= 5 && board[row + i][column - i] != currentPlayer && board[row + i][column - i] != "") {
+            leftIntercept = true;
         }
         if (column+i <= 6 && row-i >= 0 && board[row - i][column + i] === currentPlayer) { //top right
-            numSameIconsNextTo++;
+            numSameIconsNextToRight++;
+        } else if (column+i <= 6 && row-i >= 0 && board[row - i][column + i] != currentPlayer && board[row - i][column + i] !=  "") {
+            rightIntercept = true;
         }
     }
 
-    return numSameIconsNextTo >= 3;
+    return (numSameIconsNextToLeft + numSameIconsNextToRight) >= 3;
 }
 function checkNegativeDiagonal(row, column) {
-    let numSameIconsNextTo = 0;
+    let numSameIconsNextToLeft = 0;
+    let numSameIconsNextToRight = 0;
+    let leftIntercept = false;
+    let rightIntercept = false;
+
     for (let i = 1; i < 4; i++) {
-        if (column-i >= 0 && row-i >= 0 && board[row - i][column - i] === currentPlayer) { //top left
-            numSameIconsNextTo++;
+        if ((column-i >= 0 && row-i >= 0) && board[row - i][column - i] === currentPlayer && leftIntercept === false) { //top left
+            numSameIconsNextToLeft++;
+        } else if ((column-i >= 0 && row-i >= 0) && board[row - i][column - i] != currentPlayer && board[row - i][column - i] != "") {
+            leftIntercept = true;
         }
-        if (column+i <= 6 && row+i <= 5 && board[row + i][column + i] === currentPlayer) { //bottom right
-            numSameIconsNextTo++;
+        if ((column+i <= 6 && row+i <= 5) && board[row + i][column + i] === currentPlayer && rightIntercept === false) { //bottom right
+            numSameIconsNextToRight++;
+        } else if ((column+i <= 6 && row+i <= 5) && board[row + i][column + i] != currentPlayer && board[row + i][column + i] != "") {
+            rightIntercept = true;
         }
     }
 
-    return numSameIconsNextTo >= 3;
+    return (numSameIconsNextToLeft + numSameIconsNextToRight) >= 3;
 }
