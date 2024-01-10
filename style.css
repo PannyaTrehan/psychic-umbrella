@@ -4,15 +4,15 @@
     justify-content: center;
     width: 75px;
     height: 75px;
-    border: 2px solid;
-    box-shadow: 0 0 0 2px;
+    border: 2px solid rgb(16, 16, 193);
+    box-shadow: 0 0 0 2px rgb(16, 16, 193);
     line-height: 75px;
     font-size: 50px;
     cursor: pointer;
+    background-color: rgb(16, 16, 193);
 }
 .cell:hover,
 .cell.hovered-cell {
-    background-color: lightblue; /* Change this to the desired hover color */
 }
 #gameContainer{
     font-family: 'Roboto', sans-serif;
@@ -37,5 +37,9 @@
 }
 
 .player-O {
-    background-color: rgb(0, 132, 255); /* Change this to the desired color for "O" */
+    background-color: yellow; /* Change this to the desired color for "O" */
+}
+.player-default {
+    background-color: white;
+    box-shadow: 0 0 10px 5px darkblue;
 }

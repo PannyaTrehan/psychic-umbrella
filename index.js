@@ -16,6 +16,7 @@ function initialiseGame() {
     });
     restartBtn.addEventListener("click", restartGame);
     statusText.textContent = `${currentPlayer}'s turn`;
+    setCells();
     running = true;
 }
 
@@ -59,6 +60,16 @@ function isValidMove(row, column) {
     return cellIndex >= 0 && cellIndex <= 41 && running;
 }
 
+function setCells() {
+    for (let i = 0; i <= 41; i++) {
+        const cellToUpdate = document.querySelector(`[cellIndex="${i}"]`);
+        const blackCircleDiv = document.createElement('div');
+        blackCircleDiv.classList.add('circle', 'player-default');
+        cellToUpdate.innerHTML = '';
+        cellToUpdate.appendChild(blackCircleDiv);
+    }
+}
+
 function updateCell(row, column) {
     const cellToUpdate = document.querySelector(`[cellIndex="${row * 7 + column}"]`);
 
@@ -80,7 +91,7 @@ function declareWinner() {
 }
 
 function changePlayer() {
-    currentPlayer = (currentPlayer === "Red") ? "Blue" : "Red";
+    currentPlayer = (currentPlayer === "Red") ? "Yellow" : "Red";
     statusText.textContent = `${currentPlayer}'s turn`;
 }
 
@@ -93,7 +104,7 @@ function restartGame() {
         cell.textContent = "";
         cell.classList.remove("hovered-cell");
     });
-
+    setCells();
     running = true;
 }
 
