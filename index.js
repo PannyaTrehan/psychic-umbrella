@@ -44,6 +44,7 @@ function cellClicked() {
             return;
         }
         changePlayer();
+        cellUnhovered();
     }    
 }
 
@@ -53,7 +54,12 @@ function cellHovered() {
         toolToUpdate = document.querySelector(`[toolIndex="${(this.getAttribute("cellIndex") % 7) + 1}"]`);
     }
     const greenCircleDiv = document.createElement('div');
-    greenCircleDiv.classList.add('circle', 'hover-default');
+    if (currentPlayer === "Red") {
+        greenCircleDiv.classList.add('circle', 'player-X');
+    } else {
+        greenCircleDiv.classList.add('circle', 'player-O');
+    }
+    
     toolToUpdate.innerHTML = '';
     toolToUpdate.appendChild(greenCircleDiv);
 }
